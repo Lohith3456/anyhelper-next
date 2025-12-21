@@ -42,7 +42,7 @@ export default function Footer() {
         </div>
         <div className="mt-8 flex flex-col items-center justify-between border-t pt-6 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} AnyHelper Connect. All rights reserved.
+            &copy; {new Date().getFullYear()} AnyHelper. All rights reserved.
           </p>
           <div className="mt-4 flex gap-4 sm:mt-0">
             <Link href="#" className="text-muted-foreground hover:text-foreground"><Twitter /></Link>
