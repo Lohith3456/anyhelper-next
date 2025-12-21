@@ -8,9 +8,9 @@ import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { href: "#features", label: "Features" },
-  { href: "#services", label: "Services" },
-  { href: "#how-it-works", label: "How It Works" },
+  { href: "/#features", label: "Features" },
+  { href: "/#services", label: "Services" },
+  { href: "/#how-it-works", label: "How It Works" },
 ];
 
 export default function Header() {
@@ -52,8 +52,12 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost">Log In</Button>
-          <Button style={{ backgroundColor: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}>Sign Up</Button>
+          <Link href="/login">
+            <Button variant="ghost">Log In</Button>
+          </Link>
+          <Link href="/signup">
+            <Button style={{ backgroundColor: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}>Sign Up</Button>
+          </Link>
         </div>
 
         <Button
@@ -81,8 +85,12 @@ export default function Header() {
               </Link>
             ))}
             <div className="flex flex-col gap-2 pt-2 border-t">
-              <Button variant="ghost">Log In</Button>
-              <Button style={{ backgroundColor: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}>Sign Up</Button>
+              <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                <Button variant="ghost" className="w-full">Log In</Button>
+              </Link>
+              <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
+                <Button style={{ backgroundColor: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }} className="w-full">Sign Up</Button>
+              </Link>
             </div>
           </nav>
         </div>
