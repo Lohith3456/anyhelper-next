@@ -84,7 +84,6 @@ export default function HelperProfilePage({ params }: { params: { helperId: stri
                 <span className="text-muted-foreground">/{helper.unit}</span>
               </p>
               <Button size="lg" className="mt-4 w-full">Book Now</Button>
-              <Button variant="outline" className="mt-2 w-full">Contact Helper</Button>
             </CardContent>
           </Card>
         </div>
