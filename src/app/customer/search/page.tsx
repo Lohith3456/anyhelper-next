@@ -5,6 +5,7 @@ import { FilterSidebar, Filters } from "@/components/search/filter-sidebar";
 import { HelperCard } from "@/components/search/helper-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSearchParams, useRouter } from "next/navigation";
+import { IntelligentSearch } from "@/components/search/intelligent-search";
 
 const allHelpers = [
   {
@@ -93,6 +94,7 @@ function SearchResults() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const service = searchParams.get("service") || "cleaners";
+  const [aiHelpers, setAiHelpers] = useState<any[] | null>(null);
 
   const [filters, setFilters] = useState<Filters>({
     sortBy: "recommended",
@@ -104,13 +106,19 @@ function SearchResults() {
 
   const handleFilterChange = useCallback((newFilters: Partial<Filters>) => {
     setFilters(prev => ({...prev, ...newFilters}));
+    setAiHelpers(null); // Clear AI results when filters change
   }, []);
 
   const handleServiceChange = (newService: string) => {
+    setAiHelpers(null); // Clear AI results when service changes
     router.push(`/customer/search?service=${newService}`);
   };
 
   const filteredHelpers = useMemo(() => {
+    if (aiHelpers) {
+      return allHelpers.filter(h => aiHelpers.some(ah => ah.agentId === h.id));
+    }
+
     let helpers = allHelpers.filter(h => h.category === service);
 
     // Filter by price
@@ -147,39 +155,55 @@ function SearchResults() {
     }
     
     return helpers;
-  }, [filters, service]);
+  }, [filters, service, aiHelpers]);
 
   const serviceName = service.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   
   // For now, onApply is a no-op but in a real app would trigger a fetch
-  const handleApply = () => { console.log("Applying filters:", filters) };
+  const handleApply = () => { 
+    setAiHelpers(null);
+    console.log("Applying filters:", filters) 
+  };
+  
+  const handleAiSearch = (results: any[]) => {
+    // A simple mock of mapping AI results back to our helper data
+    // In a real app, you would have a better mapping or fetch full profiles
+    const matched = allHelpers.filter(h => 
+      results.some(r => r.name === h.name)
+    );
+    setAiHelpers(matched);
+  }
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-      <div className="lg:col-span-1">
-        <FilterSidebar 
-          filters={filters} 
-          onFilterChange={handleFilterChange}
-          onApply={handleApply}
-          currentService={service}
-          onServiceChange={handleServiceChange}
-        />
-      </div>
-      <div className="lg:col-span-3">
-        <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h1 className="font-headline text-3xl font-bold tracking-tight">
-              {serviceName}
-            </h1>
-            <p className="text-muted-foreground">
-              Showing {filteredHelpers.length} results
-            </p>
-          </div>
+    <div className="space-y-12">
+      <IntelligentSearch serviceType={serviceName} onSearchResults={handleAiSearch} />
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        <div className="lg:col-span-1">
+          <FilterSidebar 
+            filters={filters} 
+            onFilterChange={handleFilterChange}
+            onApply={handleApply}
+            currentService={service}
+            onServiceChange={handleServiceChange}
+          />
         </div>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {filteredHelpers.map((helper) => (
-            <HelperCard key={helper.id} {...helper} />
-          ))}
+        <div className="lg:col-span-3">
+          <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h1 className="font-headline text-3xl font-bold tracking-tight">
+                {aiHelpers ? 'AI Recommended Helpers' : serviceName}
+              </h1>
+              <p className="text-muted-foreground">
+                Showing {filteredHelpers.length} results
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {filteredHelpers.map((helper) => (
+              <HelperCard key={helper.id} {...helper} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
