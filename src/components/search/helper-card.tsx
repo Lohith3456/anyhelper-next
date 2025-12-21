@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import Link from "next/link";
 
 interface HelperCardProps {
+  id: string;
   name: string;
   rating: number;
   reviews: number;
@@ -22,6 +24,7 @@ interface HelperCardProps {
 }
 
 export function HelperCard({
+  id,
   name,
   rating,
   reviews,
@@ -87,7 +90,9 @@ export function HelperCard({
               <span className="text-sm text-muted-foreground">/{unit}</span>
             </p>
           </div>
-          <Button size="sm">View Profile</Button>
+          <Link href={`/customer/helper/${id}`}>
+            <Button size="sm">View Profile</Button>
+          </Link>
         </div>
       </CardContent>
     </Card>

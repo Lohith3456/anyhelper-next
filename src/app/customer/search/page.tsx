@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const helpers = [
   {
+    id: "john-doe",
     name: "John Doe",
     rating: 4.8,
     reviews: 125,
@@ -18,6 +19,7 @@ const helpers = [
     location: "San Francisco, CA",
   },
   {
+    id: "jane-smith",
     name: "Jane Smith",
     rating: 4.9,
     reviews: 89,
@@ -31,6 +33,7 @@ const helpers = [
     location: "Oakland, CA",
   },
   {
+    id: "mike-johnson",
     name: "Mike Johnson",
     rating: 4.5,
     reviews: 45,
@@ -44,6 +47,7 @@ const helpers = [
     location: "San Francisco, CA",
   },
   {
+    id: "emily-davis",
     name: "Emily Davis",
     rating: 5.0,
     reviews: 210,
@@ -79,7 +83,7 @@ function SearchResults({ service }: { service: string | undefined }) {
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {helpers.map((helper) => (
-            <HelperCard key={helper.name} {...helper} />
+            <HelperCard key={helper.id} {...helper} />
           ))}
         </div>
       </div>
