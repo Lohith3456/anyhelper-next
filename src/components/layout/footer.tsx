@@ -8,7 +8,9 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-8 md:px-6">
         <div className="grid gap-8 md:grid-cols-4">
           <div className="flex flex-col gap-4">
-            <Logo />
+            <Link href="/">
+              <Logo />
+            </Link>
             <p className="text-sm text-muted-foreground">
               Connecting you with trusted local service professionals.
             </p>
