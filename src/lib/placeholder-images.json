@@ -1,3 +1,16 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-landing",
+      "description": "A person using a smartphone to book a service, with abstract background elements.",
+      "imageUrl": "https://images.unsplash.com/photo-1760888549280-4aef010720bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhcHAlMjBzZXJ2aWNlfGVufDB8fHx8MTc2NjMxMzk1OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "app service"
+    },
+    {
+      "id": "cta-background",
+      "description": "Abstract background with blue and orange gradients.",
+      "imageUrl": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGdyYWRpZW50fGVufDB8fHx8MTc2NjMwMjc1N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract gradient"
+    }
+  ]
 }
