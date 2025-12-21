@@ -1,7 +1,12 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import ServiceCategories from "@/components/landing/service-categories";
+import { IntelligentSearch } from "@/components/search/intelligent-search";
 
 const recentlyViewedServices = [
   { name: "House Cleaning", category: "Cleaners" },
@@ -11,6 +16,16 @@ const recentlyViewedServices = [
 ];
 
 export default function CustomerPage() {
+  const router = useRouter();
+  const [serviceType, setServiceType] = useState("cleaners"); // Default service type
+
+  const handleAiSearch = (results: any[], searchParams: any) => {
+    // Store results and params to pass to the search page
+    sessionStorage.setItem('ai-search-results', JSON.stringify(results));
+    sessionStorage.setItem('ai-search-params', JSON.stringify(searchParams));
+    router.push(`/customer/search`);
+  };
+
   return (
     <>
       <section className="py-12 md:py-20">
@@ -20,8 +35,11 @@ export default function CustomerPage() {
               What service are you looking for?
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Select a category to find the right professional for your needs.
+              Describe your needs below, or select a category to find the right professional.
             </p>
+          </div>
+          <div className="mt-8 mx-auto max-w-4xl">
+            <IntelligentSearch serviceType={serviceType} onSearchResults={handleAiSearch} />
           </div>
         </div>
       </section>

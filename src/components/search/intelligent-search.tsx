@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface IntelligentSearchProps {
   serviceType: string;
-  onSearchResults: (results: any[]) => void;
+  onSearchResults: (results: any[], searchParams: any) => void;
 }
 
 export function IntelligentSearch({ serviceType, onSearchResults }: IntelligentSearchProps) {
@@ -35,14 +35,16 @@ export function IntelligentSearch({ serviceType, onSearchResults }: IntelligentS
     }
 
     setIsLoading(true);
+    const searchParams = {
+      requestDescription: description,
+      customerLocation: "San Francisco, CA", // Mock location
+      serviceType: serviceType,
+      availableTime: date.toISOString(),
+    };
+
     try {
-      const results = await intelligentServiceMatching({
-        requestDescription: description,
-        customerLocation: "San Francisco, CA", // Mock location
-        serviceType: serviceType,
-        availableTime: date.toISOString(),
-      });
-      onSearchResults(results);
+      const results = await intelligentServiceMatching(searchParams);
+      onSearchResults(results, searchParams);
       toast({
         title: "AI Search Complete",
         description: "We've found the best helpers for your request.",

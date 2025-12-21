@@ -1,11 +1,10 @@
 "use client";
 
-import { Suspense, useState, useMemo, useCallback } from "react";
+import { Suspense, useState, useMemo, useCallback, useEffect } from "react";
 import { FilterSidebar, Filters } from "@/components/search/filter-sidebar";
 import { HelperCard } from "@/components/search/helper-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSearchParams, useRouter } from "next/navigation";
-import { IntelligentSearch } from "@/components/search/intelligent-search";
 
 const allHelpers = [
   {
@@ -93,8 +92,19 @@ const allHelpers = [
 function SearchResults() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const service = searchParams.get("service") || "cleaners";
+  
   const [aiHelpers, setAiHelpers] = useState<any[] | null>(null);
+  const [aiSearchParams, setAiSearchParams] = useState<any | null>(null);
+
+  // Initialize service from URL or AI search params
+  const getInitialService = () => {
+    if (aiSearchParams) {
+      return aiSearchParams.serviceType.toLowerCase().replace(/ /g, '-');
+    }
+    return searchParams.get("service") || "cleaners";
+  }
+
+  const [service, setService] = useState(getInitialService);
 
   const [filters, setFilters] = useState<Filters>({
     sortBy: "recommended",
@@ -104,13 +114,33 @@ function SearchResults() {
     verified: false,
   });
 
+  useEffect(() => {
+    const results = sessionStorage.getItem('ai-search-results');
+    const params = sessionStorage.getItem('ai-search-params');
+    if (results && params) {
+      const parsedResults = JSON.parse(results);
+      const parsedParams = JSON.parse(params);
+      setAiHelpers(parsedResults);
+      setAiSearchParams(parsedParams);
+      const serviceFromAI = parsedParams.serviceType.toLowerCase().replace(/ /g, '-');
+      setService(serviceFromAI);
+      // Set availability filter from AI search
+      setFilters(prev => ({ ...prev, availability: new Date(parsedParams.availableTime) }));
+
+      sessionStorage.removeItem('ai-search-results');
+      sessionStorage.removeItem('ai-search-params');
+    }
+  }, []);
+
   const handleFilterChange = useCallback((newFilters: Partial<Filters>) => {
     setFilters(prev => ({...prev, ...newFilters}));
-    setAiHelpers(null); // Clear AI results when filters change
+    setAiHelpers(null); // Clear AI results when filters change manually
   }, []);
 
   const handleServiceChange = (newService: string) => {
+    setService(newService);
     setAiHelpers(null); // Clear AI results when service changes
+    setAiSearchParams(null);
     router.push(`/customer/search?service=${newService}`);
   };
 
@@ -126,7 +156,6 @@ function SearchResults() {
 
     // Filter by availability
     if (filters.availability) {
-      // The selected date needs to be formatted to 'YYYY-MM-DD' to match the data.
       const selectedDate = filters.availability.toLocaleDateString('en-CA');
       helpers = helpers.filter(h => h.availableDates.includes(selectedDate));
     }
@@ -159,52 +188,55 @@ function SearchResults() {
 
   const serviceName = service.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   
-  // For now, onApply is a no-op but in a real app would trigger a fetch
   const handleApply = () => { 
     setAiHelpers(null);
-    console.log("Applying filters:", filters) 
+    setAiSearchParams(null);
+    console.log("Applying filters:", filters);
+    // Update URL to reflect filters if needed
+    const params = new URLSearchParams();
+    params.set('service', service);
+    // You could add other filters to params here if you want them to be shareable
+    router.push(`/customer/search?${params.toString()}`);
   };
-  
-  const handleAiSearch = (results: any[]) => {
-    // A simple mock of mapping AI results back to our helper data
-    // In a real app, you would have a better mapping or fetch full profiles
-    const matched = allHelpers.filter(h => 
-      results.some(r => r.name === h.name)
-    );
-    setAiHelpers(matched);
-  }
 
   return (
-    <div className="space-y-12">
-      <IntelligentSearch serviceType={serviceName} onSearchResults={handleAiSearch} />
-
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-        <div className="lg:col-span-1">
-          <FilterSidebar 
-            filters={filters} 
-            onFilterChange={handleFilterChange}
-            onApply={handleApply}
-            currentService={service}
-            onServiceChange={handleServiceChange}
-          />
-        </div>
-        <div className="lg:col-span-3">
-          <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-            <div>
-              <h1 className="font-headline text-3xl font-bold tracking-tight">
-                {aiHelpers ? 'AI Recommended Helpers' : serviceName}
-              </h1>
-              <p className="text-muted-foreground">
-                Showing {filteredHelpers.length} results
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+      <div className="lg:col-span-1">
+        <FilterSidebar 
+          filters={filters} 
+          onFilterChange={handleFilterChange}
+          onApply={handleApply}
+          currentService={service}
+          onServiceChange={handleServiceChange}
+        />
+      </div>
+      <div className="lg:col-span-3">
+        <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <h1 className="font-headline text-3xl font-bold tracking-tight">
+              {aiHelpers ? 'AI Recommended Helpers' : serviceName}
+            </h1>
+            {aiSearchParams?.requestDescription && (
+              <p className="text-muted-foreground mt-1 italic">
+                For: &quot;{aiSearchParams.requestDescription}&quot;
               </p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredHelpers.map((helper) => (
-              <HelperCard key={helper.id} {...helper} />
-            ))}
+            )}
+            <p className="text-muted-foreground mt-2">
+              Showing {filteredHelpers.length} results
+            </p>
           </div>
         </div>
+        {filteredHelpers.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {filteredHelpers.map((helper) => (
+                <HelperCard key={helper.id} {...helper} />
+            ))}
+            </div>
+        ) : (
+            <div className="text-center py-12">
+                <p className="text-lg text-muted-foreground">No helpers found matching your criteria.</p>
+            </div>
+        )}
       </div>
     </div>
   );
