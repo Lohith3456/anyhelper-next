@@ -34,7 +34,7 @@ const services = [
 
 export default function ServiceCategories() {
   return (
-    <section id="services" className="bg-card py-20 md:py-32">
+    <section id="services" className="py-20 md:py-32 bg-card">
       <div className="container mx-auto px-4 md:px-6">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
@@ -48,7 +48,7 @@ export default function ServiceCategories() {
           {services.map((service) => (
             <div
               key={service.name}
-              className="group flex flex-col items-center justify-center gap-2 rounded-lg border bg-background p-4 text-center transition-all hover:bg-primary hover:text-primary-foreground"
+              className="group flex flex-col items-center justify-center gap-2 rounded-lg border bg-background p-4 text-center transition-all hover:bg-primary hover:text-primary-foreground cursor-pointer"
             >
               <div className="text-primary group-hover:text-primary-foreground">
                 {service.icon}

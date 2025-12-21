@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import Link from "next/link";
 
 export default function Hero() {
   const heroImage = PlaceHolderImages.find((img) => img.id === "hero-landing");
@@ -17,7 +18,9 @@ export default function Hero() {
               AnyHelper Connect links you with trusted drivers, cleaners, plumbers, and more. Instantly.
             </p>
             <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center md:justify-start">
-              <Button size="lg">Find a Helper</Button>
+              <Link href="/customer">
+                <Button size="lg">Find a Helper</Button>
+              </Link>
               <Button size="lg" variant="outline">
                 Become a Helper
               </Button>
