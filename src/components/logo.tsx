@@ -9,7 +9,7 @@ export function Logo({ className }: LogoProps) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <Image 
-        src="https://arbitrary-tomato-hurla4tuwt-fopra91wf0.edgeone.dev/"
+        src="https://img.sanishtech.com/u/78ff160f2aec7f08aff84eb03e2484fc.png"
         alt="AnyHelper Logo"
         width={32}
         height={32}
