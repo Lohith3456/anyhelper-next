@@ -93,7 +93,8 @@ function SearchResults() {
 
     // Filter by availability
     if (filters.availability) {
-      const selectedDate = filters.availability.toISOString().split('T')[0];
+      // The selected date needs to be formatted to 'YYYY-MM-DD' to match the data.
+      const selectedDate = filters.availability.toLocaleDateString('en-CA');
       helpers = helpers.filter(h => h.availableDates.includes(selectedDate));
     }
 
