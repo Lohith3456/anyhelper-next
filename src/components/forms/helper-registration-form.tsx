@@ -47,6 +47,8 @@ const formSchema = z.object({
   address: z.string().min(5, {
     message: "Please enter a valid address.",
   }),
+  governmentId: z.any().refine((files) => files?.length == 1, "Government ID is required."),
+  proofOfAddress: z.any().refine((files) => files?.length == 1, "Proof of address is required."),
   serviceCategory: z.string({
     required_error: "Please select a service category.",
   }),
@@ -76,6 +78,9 @@ export function HelperRegistrationForm() {
       terms: false,
     },
   });
+  
+  const fileRefId = form.register("governmentId");
+  const fileRefAddress = form.register("proofOfAddress");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -176,6 +181,38 @@ export function HelperRegistrationForm() {
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="governmentId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Government-Issued ID</FormLabel>
+                    <FormControl>
+                      <Input type="file" {...fileRefId} />
+                    </FormControl>
+                    <FormDescription>
+                      Upload a clear photo of your driver's license, passport, or national ID card.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="proofOfAddress"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Proof of Address</FormLabel>
+                    <FormControl>
+                      <Input type="file" {...fileRefAddress} />
+                    </FormControl>
+                    <FormDescription>
+                      Upload a recent utility bill or bank statement showing your name and address.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
