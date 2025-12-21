@@ -121,7 +121,7 @@ export function FaceScan({ onScanComplete }: FaceScanProps) {
           </div>
         </div>
         <Progress value={progressPercentage} className="w-full max-w-sm" />
-        <Button variant="destructive" onClick={stopScan}>Cancel Scan</Button>
+        <Button variant="destructive" onClick={stopScan} type="button">Cancel Scan</Button>
       </div>
     );
   }
@@ -136,7 +136,7 @@ export function FaceScan({ onScanComplete }: FaceScanProps) {
           </AlertDescription>
         </Alert>
       )}
-      <Button onClick={startScan} disabled={hasCameraPermission === false}>
+      <Button onClick={startScan} type="button" disabled={hasCameraPermission === false}>
         Start Face Scan
       </Button>
     </div>
