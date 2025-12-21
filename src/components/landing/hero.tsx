@@ -21,9 +21,11 @@ export default function Hero() {
               <Link href="/customer">
                 <Button size="lg">Find a Helper</Button>
               </Link>
-              <Button size="lg" variant="outline">
-                Become a Helper
-              </Button>
+              <Link href="/helper">
+                <Button size="lg" variant="outline">
+                  Become a Helper
+                </Button>
+              </Link>
             </div>
           </div>
           <div className="relative h-64 md:h-auto md:w-full">
