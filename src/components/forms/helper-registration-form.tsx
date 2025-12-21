@@ -96,10 +96,10 @@ const formSchema = z.object({
 type FormSchemaType = z.infer<typeof formSchema>;
 
 const steps = [
-  { id: 'Step 1', name: 'Personal Information', fields: ['fullName', 'email', 'phone', 'address', 'profilePhoto'] },
-  { id: 'Step 2', name: 'Service Details', fields: ['serviceCategory', 'experience', 'bio'] },
-  { id: 'Step 3', name: 'Verification', fields: ['governmentId', 'proofOfAddress', 'faceScanCompleted'] },
-  { id: 'Step 4', name: 'Agreement', fields: ['terms'] },
+  { id: 1, name: 'Personal Information', fields: ['fullName', 'email', 'phone', 'address', 'profilePhoto'] },
+  { id: 2, name: 'Service Details', fields: ['serviceCategory', 'experience', 'bio'] },
+  { id: 3, name: 'Verification', fields: ['governmentId', 'proofOfAddress', 'faceScanCompleted'] },
+  { id: 4, name: 'Agreement', fields: ['terms'] },
 ]
 
 export function HelperRegistrationForm() {
@@ -165,27 +165,39 @@ export function HelperRegistrationForm() {
       <CardHeader>
         <CardTitle>Become a Helper</CardTitle>
         <CardDescription>Join our network of trusted professionals.</CardDescription>
-        <nav aria-label="Progress" className="pt-4">
-          <ol role="list" className="space-y-4 md:flex md:space-x-8 md:space-y-0">
+        <nav aria-label="Progress" className="pt-8">
+          <ol role="list" className="flex items-center">
             {steps.map((step, index) => {
               const state = currentStep > index ? 'complete' : currentStep === index ? 'current' : 'upcoming';
 
               return (
-                <li key={step.name} className="md:flex-1">
-                  <div
-                    className="group flex flex-col border-l-4 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
-                    aria-current={state === 'current' ? 'step' : undefined}
-                    style={{
-                      borderColor: state === 'current' ? 'hsl(var(--primary))' : state === 'complete' ? 'hsl(var(--primary))' : 'hsl(var(--border))'
-                    }}
-                  >
-                    <span className={cn(
-                      "text-sm font-medium transition-colors",
-                      state === 'current' ? 'text-primary' : state === 'complete' ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                <li key={step.name} className="relative flex-1">
+                  {/* Connecting line */}
+                  {index > 0 && (
+                    <div className={cn(
+                      "absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-full h-0.5",
+                      currentStep >= index ? 'bg-primary' : 'bg-border'
+                    )} aria-hidden="true" />
+                  )}
+
+                  <div className="relative flex flex-col items-center text-center">
+                    <div
+                      className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
+                        state === 'complete' && 'bg-primary text-primary-foreground',
+                        state === 'current' && 'border-2 border-primary bg-background text-primary',
+                        state === 'upcoming' && 'border-2 border-border bg-background text-muted-foreground'
+                      )}
+                      aria-current={state === 'current' ? 'step' : undefined}
+                    >
+                      {state === 'complete' ? <Check className="w-5 h-5" /> : step.id}
+                    </div>
+                    <p className={cn(
+                      "text-sm font-medium mt-2",
+                      state === 'current' ? 'text-primary' : 'text-muted-foreground'
                     )}>
-                      {step.id}
-                    </span>
-                    <span className="text-sm font-medium">{step.name}</span>
+                      {step.name}
+                    </p>
                   </div>
                 </li>
               )
