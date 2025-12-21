@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Car,
   Sparkles,
@@ -46,15 +47,16 @@ export default function ServiceCategories() {
         </div>
         <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
           {services.map((service) => (
-            <div
-              key={service.name}
-              className="group flex flex-col items-center justify-center gap-2 rounded-lg border bg-background p-4 text-center transition-all hover:bg-primary hover:text-primary-foreground cursor-pointer"
-            >
-              <div className="text-primary group-hover:text-primary-foreground">
-                {service.icon}
+            <Link key={service.name} href={`/customer/search?service=${service.name.toLowerCase().replace(/ /g, '-')}`}>
+              <div
+                className="group flex h-full flex-col items-center justify-center gap-2 rounded-lg border bg-background p-4 text-center transition-all hover:bg-primary hover:text-primary-foreground cursor-pointer"
+              >
+                <div className="text-primary group-hover:text-primary-foreground">
+                  {service.icon}
+                </div>
+                <span className="text-sm font-medium">{service.name}</span>
               </div>
-              <span className="text-sm font-medium">{service.name}</span>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
