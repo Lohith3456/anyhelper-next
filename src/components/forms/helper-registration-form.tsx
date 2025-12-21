@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import React from 'react';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
-import Link from "next/link";
+import { FileUploadButton } from "@/components/forms/file-upload-button";
 
 const serviceCategories = [
   "Drivers", "Cleaners", "Plumbers", "Electricians", "Carpenters", 
@@ -78,9 +79,6 @@ export function HelperRegistrationForm() {
       terms: false,
     },
   });
-  
-  const fileRefId = form.register("governmentId");
-  const fileRefAddress = form.register("proofOfAddress");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -188,11 +186,15 @@ export function HelperRegistrationForm() {
               <FormField
                 control={form.control}
                 name="governmentId"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Government-Issued ID</FormLabel>
                     <FormControl>
-                      <Input type="file" {...fileRefId} />
+                      <FileUploadButton 
+                        form={form} 
+                        name="governmentId"
+                        buttonText="Upload ID"
+                      />
                     </FormControl>
                     <FormDescription>
                       Upload a clear photo of your driver's license, passport, or national ID card.
@@ -204,11 +206,15 @@ export function HelperRegistrationForm() {
                <FormField
                 control={form.control}
                 name="proofOfAddress"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Proof of Address</FormLabel>
                     <FormControl>
-                      <Input type="file" {...fileRefAddress} />
+                      <FileUploadButton 
+                        form={form} 
+                        name="proofOfAddress"
+                        buttonText="Upload Proof"
+                      />
                     </FormControl>
                     <FormDescription>
                       Upload a recent utility bill or bank statement showing your name and address.
