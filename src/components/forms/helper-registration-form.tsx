@@ -41,55 +41,19 @@ const serviceCategories = [
 
 const formSchema = z.object({
   profilePhoto: z.any().optional(),
-  fullName: z.string().min(2, {
-    message: "Full name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 digits.",
-  }),
-  address: z.string().min(5, {
-    message: "Please enter a valid address.",
-  }),
+  fullName: z.string().optional(),
+  email: z.string().optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
   governmentId: z.any().optional(),
   proofOfAddress: z.any().optional(),
-  faceScanCompleted: z.boolean().refine(val => val === true, "Face scan is required."),
-  serviceCategory: z.string({
-    required_error: "Please select a service category.",
-  }),
-  experience: z.coerce.number().min(0, {
-    message: "Experience cannot be negative.",
-  }),
+  faceScanCompleted: z.boolean().optional(),
+  serviceCategory: z.string().optional(),
+  experience: z.coerce.number().optional(),
   bio: z.string().max(300, {
     message: "Bio must not be longer than 300 characters."
   }).optional(),
-  terms: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms and policies to proceed.",
-  }),
-}).superRefine((data, ctx) => {
-  if (data.profilePhoto === undefined || data.profilePhoto?.length !== 1) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["profilePhoto"],
-      message: "Profile photo is required.",
-    });
-  }
-  if (data.governmentId === undefined || data.governmentId?.length !== 1) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["governmentId"],
-      message: "Government ID is required.",
-    });
-  }
-  if (data.proofOfAddress === undefined || data.proofOfAddress?.length !== 1) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["proofOfAddress"],
-      message: "Proof of address is required.",
-    });
-  }
+  terms: z.boolean().optional(),
 });
 
 
@@ -115,7 +79,6 @@ export function HelperRegistrationForm() {
       email: "",
       phone: "",
       address: "",
-      experience: 0,
       bio: "",
       terms: false,
       faceScanCompleted: false,
