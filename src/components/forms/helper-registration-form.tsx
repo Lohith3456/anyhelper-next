@@ -1,9 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldPath } from "react-hook-form";
 import { z } from "zod";
 import React from 'react';
+import { Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +31,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { FileUploadButton } from "@/components/forms/file-upload-button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { FaceScan } from "./face-scan";
-import { Progress } from "../ui/progress";
 import { cn } from "@/lib/utils";
 
 const serviceCategories = [
@@ -165,15 +165,35 @@ export function HelperRegistrationForm() {
       <CardHeader>
         <CardTitle>Become a Helper</CardTitle>
         <CardDescription>Join our network of trusted professionals.</CardDescription>
-        <div className="pt-4">
-          <div className="flex justify-between mb-2 text-sm font-medium text-muted-foreground">
-            <span>{steps[currentStep].name}</span>
-            <span>Step {currentStep + 1} of {steps.length}</span>
-          </div>
-          <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
-        </div>
+        <nav aria-label="Progress" className="pt-4">
+          <ol role="list" className="space-y-4 md:flex md:space-x-8 md:space-y-0">
+            {steps.map((step, index) => {
+              const state = currentStep > index ? 'complete' : currentStep === index ? 'current' : 'upcoming';
+
+              return (
+                <li key={step.name} className="md:flex-1">
+                  <div
+                    className="group flex flex-col border-l-4 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
+                    aria-current={state === 'current' ? 'step' : undefined}
+                    style={{
+                      borderColor: state === 'current' ? 'hsl(var(--primary))' : state === 'complete' ? 'hsl(var(--primary))' : 'hsl(var(--border))'
+                    }}
+                  >
+                    <span className={cn(
+                      "text-sm font-medium transition-colors",
+                      state === 'current' ? 'text-primary' : state === 'complete' ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                    )}>
+                      {step.id}
+                    </span>
+                    <span className="text-sm font-medium">{step.name}</span>
+                  </div>
+                </li>
+              )
+            })}
+          </ol>
+        </nav>
       </CardHeader>
-      <CardContent className="p-8 pt-0">
+      <CardContent className="p-8 pt-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             
@@ -446,5 +466,3 @@ export function HelperRegistrationForm() {
     </Card>
   );
 }
-
-    
