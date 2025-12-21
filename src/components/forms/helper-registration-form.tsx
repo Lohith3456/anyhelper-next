@@ -28,6 +28,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileUploadButton } from "@/components/forms/file-upload-button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const serviceCategories = [
   "Drivers", "Cleaners", "Plumbers", "Electricians", "Carpenters", 
@@ -36,6 +37,7 @@ const serviceCategories = [
 ];
 
 const formSchema = z.object({
+  profilePhoto: z.any().refine((files) => files?.length == 1, "Profile photo is required."),
   fullName: z.string().min(2, {
     message: "Full name must be at least 2 characters.",
   }),
@@ -66,6 +68,7 @@ const formSchema = z.object({
 
 export function HelperRegistrationForm() {
   const { toast } = useToast();
+  const [photoPreview, setPhotoPreview] = React.useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -80,6 +83,8 @@ export function HelperRegistrationForm() {
     },
   });
 
+  const profilePhotoRef = form.register("profilePhoto");
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     toast({
@@ -93,6 +98,33 @@ export function HelperRegistrationForm() {
       <CardContent className="p-8">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="flex flex-col items-center space-y-4">
+                <Avatar className="w-24 h-24">
+                  <AvatarImage src={photoPreview || undefined} alt="Profile photo preview" />
+                  <AvatarFallback>
+                    <svg className="h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </AvatarFallback>
+                </Avatar>
+                <FormField
+                  control={form.control}
+                  name="profilePhoto"
+                  render={() => (
+                    <FormItem>
+                      <FormControl>
+                        <FileUploadButton 
+                          form={form} 
+                          name="profilePhoto"
+                          buttonText="Upload Profile Photo"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FormField
                 control={form.control}
