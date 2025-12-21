@@ -26,9 +26,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUploadButton } from "@/components/forms/file-upload-button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { FaceScan } from "./face-scan";
 
 const serviceCategories = [
   "Drivers", "Cleaners", "Plumbers", "Electricians", "Carpenters", 
@@ -52,6 +53,7 @@ const formSchema = z.object({
   }),
   governmentId: z.any().refine((files) => files?.length == 1, "Government ID is required."),
   proofOfAddress: z.any().refine((files) => files?.length == 1, "Proof of address is required."),
+  faceScanCompleted: z.boolean().refine(val => val === true, "Face scan is required."),
   serviceCategory: z.string({
     required_error: "Please select a service category.",
   }),
@@ -80,10 +82,23 @@ export function HelperRegistrationForm() {
       experience: 0,
       bio: "",
       terms: false,
+      faceScanCompleted: false,
     },
   });
 
-  const profilePhotoRef = form.register("profilePhoto");
+  const profilePhotoFiles = form.watch("profilePhoto");
+  React.useEffect(() => {
+    if (profilePhotoFiles && profilePhotoFiles.length > 0) {
+      const file = profilePhotoFiles[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPhotoPreview(null);
+    }
+  }, [profilePhotoFiles]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -256,6 +271,28 @@ export function HelperRegistrationForm() {
                 )}
               />
             </div>
+            
+            <FormField
+              control={form.control}
+              name="faceScanCompleted"
+              render={() => (
+                <FormItem>
+                   <Card>
+                    <CardHeader>
+                      <CardTitle>Facial Verification</CardTitle>
+                      <FormDescription>
+                        Complete a quick face scan to verify your identity.
+                      </FormDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <FaceScan onScanComplete={() => form.setValue('faceScanCompleted', true, { shouldValidate: true })} />
+                    </CardContent>
+                  </Card>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="bio"
