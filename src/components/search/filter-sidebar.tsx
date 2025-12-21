@@ -11,10 +11,28 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
-export function FilterSidebar() {
+export interface Filters {
+  sortBy: string;
+  priceRange: number[];
+  availability: Date | undefined;
+  topPro: boolean;
+  verified: boolean;
+}
+
+interface FilterSidebarProps {
+  filters: Filters;
+  onFilterChange: (filters: Partial<Filters>) => void;
+  onApply: () => void;
+}
+
+export function FilterSidebar({ filters, onFilterChange, onApply }: FilterSidebarProps) {
   return (
     <Card>
       <CardHeader>
@@ -23,7 +41,10 @@ export function FilterSidebar() {
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <Label htmlFor="sort-by">Sort by</Label>
-          <Select defaultValue="recommended">
+          <Select 
+            value={filters.sortBy} 
+            onValueChange={(value) => onFilterChange({ sortBy: value })}
+          >
             <SelectTrigger id="sort-by">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -39,28 +60,63 @@ export function FilterSidebar() {
         <div className="space-y-4">
           <Label>Price Range</Label>
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>$10</span>
+            <span>${filters.priceRange[0]}</span>
             <span>$200+</span>
           </div>
-          <Slider defaultValue={[50]} max={200} step={10} />
+          <Slider 
+            value={filters.priceRange} 
+            onValueChange={(value) => onFilterChange({ priceRange: value })}
+            max={200} 
+            step={10}
+            min={10}
+          />
         </div>
 
         <div className="space-y-4">
           <Label>Availability</Label>
-          <Input type="date" />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !filters.availability && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {filters.availability ? format(filters.availability, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={filters.availability}
+                onSelect={(date) => onFilterChange({ availability: date })}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="space-y-4">
           <Label>Helper Tiers</Label>
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
-              <Checkbox id="top-pro" />
+              <Checkbox 
+                id="top-pro" 
+                checked={filters.topPro}
+                onCheckedChange={(checked) => onFilterChange({ topPro: !!checked })}
+              />
               <Label htmlFor="top-pro" className="font-normal">
                 Top Pro
               </Label>
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox id="verified" />
+              <Checkbox 
+                id="verified"
+                checked={filters.verified}
+                onCheckedChange={(checked) => onFilterChange({ verified: !!checked })}
+              />
               <Label htmlFor="verified" className="font-normal">
                 Verified
               </Label>
@@ -68,7 +124,7 @@ export function FilterSidebar() {
           </div>
         </div>
         
-        <Button className="w-full">Apply Filters</Button>
+        <Button className="w-full" onClick={onApply}>Apply Filters</Button>
       </CardContent>
     </Card>
   );

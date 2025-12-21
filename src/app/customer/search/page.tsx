@@ -1,9 +1,12 @@
-import { Suspense } from "react";
-import { FilterSidebar } from "@/components/search/filter-sidebar";
+"use client";
+
+import { Suspense, useState, useMemo, useCallback } from "react";
+import { FilterSidebar, Filters } from "@/components/search/filter-sidebar";
 import { HelperCard } from "@/components/search/helper-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSearchParams } from "next/navigation";
 
-const helpers = [
+const allHelpers = [
   {
     id: "john-doe",
     name: "John Doe",
@@ -17,6 +20,7 @@ const helpers = [
     imageHint: "profile portrait",
     services: ["General Cleaning", "Deep Cleaning"],
     location: "San Francisco, CA",
+    availableDates: ["2024-08-15", "2024-08-20"],
   },
   {
     id: "jane-smith",
@@ -31,6 +35,7 @@ const helpers = [
     imageHint: "profile portrait",
     services: ["Office Cleaning"],
     location: "Oakland, CA",
+    availableDates: ["2024-08-16"],
   },
   {
     id: "mike-johnson",
@@ -45,6 +50,7 @@ const helpers = [
     imageHint: "profile portrait",
     services: ["Window Cleaning", "Carpet Cleaning"],
     location: "San Francisco, CA",
+    availableDates: ["2024-08-15", "2024-08-22"],
   },
   {
     id: "emily-davis",
@@ -59,16 +65,77 @@ const helpers = [
     imageHint: "profile portrait",
     services: ["Move-out Cleaning", "Eco-Friendly Cleaning"],
     location: "Berkeley, CA",
+    availableDates: ["2024-08-25"],
   },
 ];
 
-function SearchResults({ service }: { service: string | undefined }) {
+function SearchResults() {
+  const searchParams = useSearchParams();
+  const service = searchParams.get("service");
+
+  const [filters, setFilters] = useState<Filters>({
+    sortBy: "recommended",
+    priceRange: [10],
+    availability: undefined,
+    topPro: false,
+    verified: false,
+  });
+
+  const handleFilterChange = useCallback((newFilters: Partial<Filters>) => {
+    setFilters(prev => ({...prev, ...newFilters}));
+  }, []);
+
+  const filteredHelpers = useMemo(() => {
+    let helpers = [...allHelpers];
+
+    // Filter by price
+    helpers = helpers.filter(h => h.price >= filters.priceRange[0]);
+
+    // Filter by availability
+    if (filters.availability) {
+      const selectedDate = filters.availability.toISOString().split('T')[0];
+      helpers = helpers.filter(h => h.availableDates.includes(selectedDate));
+    }
+
+    // Filter by tier
+    if (filters.topPro) {
+      helpers = helpers.filter(h => h.isTopPro);
+    }
+    if (filters.verified) {
+      helpers = helpers.filter(h => h.isVerified);
+    }
+
+    // Sort
+    switch (filters.sortBy) {
+      case 'rating':
+        helpers.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'price-low':
+        helpers.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        helpers.sort((a, b) => b.price - a.price);
+        break;
+      default: // recommended
+        helpers.sort((a, b) => b.reviews - a.reviews);
+    }
+    
+    return helpers;
+  }, [filters]);
+
   const serviceName = service ? service.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : "Services";
   
+  // For now, onApply is a no-op but in a real app would trigger a fetch
+  const handleApply = () => { console.log("Applying filters:", filters) };
+
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
       <div className="lg:col-span-1">
-        <FilterSidebar />
+        <FilterSidebar 
+          filters={filters} 
+          onFilterChange={handleFilterChange}
+          onApply={handleApply}
+        />
       </div>
       <div className="lg:col-span-3">
         <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -77,12 +144,12 @@ function SearchResults({ service }: { service: string | undefined }) {
               {serviceName}
             </h1>
             <p className="text-muted-foreground">
-              Showing {helpers.length} results
+              Showing {filteredHelpers.length} results
             </p>
           </div>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {helpers.map((helper) => (
+          {filteredHelpers.map((helper) => (
             <HelperCard key={helper.id} {...helper} />
           ))}
         </div>
@@ -112,19 +179,11 @@ function SearchLoading() {
   );
 }
 
-export default function SearchPage({
-  searchParams,
-}: {
-  searchParams?: {
-    service?: string;
-  };
-}) {
-  const service = searchParams?.service;
-
+export default function SearchPage() {
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 md:py-20">
       <Suspense fallback={<SearchLoading />}>
-        <SearchResults service={service} />
+        <SearchResults />
       </Suspense>
     </div>
   );
