@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 type LogoProps = {
   className?: string;
@@ -7,36 +8,13 @@ type LogoProps = {
 export function Logo({ className }: LogoProps) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <svg
-        width="32"
-        height="32"
-        viewBox="0 0 32 32"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+      <Image 
+        src="https://arbitrary-tomato-hurla4tuwt-fopra91wf0.edgeone.dev/"
+        alt="AnyHelper Logo"
+        width={32}
+        height={32}
         className="h-8 w-8"
-      >
-        <path
-          d="M16 4.33333L7.16667 9.83333V20.8333C7.16667 22.0167 7.63333 23.15 8.45833 23.975C9.28333 24.8 10.4167 25.2667 11.6 25.2667L12.75 16.9667L16 14.6667L19.25 16.9667L20.4 25.2667C21.5833 25.2667 22.7167 24.8 23.5417 23.975C24.3667 23.15 24.8333 22.0167 24.8333 20.8333V9.83333L16 4.33333Z"
-          fill="#E0E0E0"
-        />
-        <path
-          d="M21.1667 11.6667C23.2055 11.6667 24.8333 10.0388 24.8333 8C24.8333 5.96121 23.2055 4.33333 21.1667 4.33333C19.1279 4.33333 17.5 5.96121 17.5 8C17.5 10.0388 19.1279 11.6667 21.1667 11.6667Z"
-          fill="#F97316"
-        />
-        <path
-          d="M10.8333 11.6667C12.8721 11.6667 14.5 10.0388 14.5 8C14.5 5.96121 12.8721 4.33333 10.8333 4.33333C8.79452 4.33333 7.16667 5.96121 7.16667 8C7.16667 10.0388 8.79452 11.6667 10.8333 11.6667Z"
-          fill="#1E429F"
-        />
-        <path
-          d="M16 14.6667L7.16667 9.83333V20.8333C7.16667 22.0167 7.63333 23.15 8.45833 23.975C9.28333 24.8 10.4167 25.2667 11.6 25.2667L12.75 16.9667L16 14.6667Z"
-          fill="#1E429F"
-        />
-        <path
-          d="M16 14.6667L24.8333 9.83333V20.8333C24.8333 22.0167 24.3667 23.15 23.5417 23.975C22.7167 24.8 21.5833 25.2667 20.4 25.2667L19.25 16.9667L16 14.6667Z"
-          fill="#F97316"
-        />
-      </svg>
-
+      />
       <span className="font-headline text-xl font-bold">
         <span style={{ color: "#1E429F" }}>Any</span>
         <span style={{ color: "#F97316" }}>Helper</span>

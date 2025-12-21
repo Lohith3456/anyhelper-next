@@ -28,6 +28,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'arbitrary-tomato-hurla4tuwt-fopra91wf0.edgeone.dev',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
