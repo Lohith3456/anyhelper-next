@@ -21,6 +21,7 @@ interface HelperCardProps {
   imageHint: string;
   services: string[];
   location: string;
+  category: string;
 }
 
 export function HelperCard({

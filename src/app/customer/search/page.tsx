@@ -4,7 +4,7 @@ import { Suspense, useState, useMemo, useCallback } from "react";
 import { FilterSidebar, Filters } from "@/components/search/filter-sidebar";
 import { HelperCard } from "@/components/search/helper-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const allHelpers = [
   {
@@ -19,6 +19,7 @@ const allHelpers = [
     imageUrl: "https://picsum.photos/seed/1/200/200",
     imageHint: "profile portrait",
     services: ["General Cleaning", "Deep Cleaning"],
+    category: "cleaners",
     location: "San Francisco, CA",
     availableDates: ["2024-08-15", "2024-08-20"],
   },
@@ -34,6 +35,7 @@ const allHelpers = [
     imageUrl: "https://picsum.photos/seed/2/200/200",
     imageHint: "profile portrait",
     services: ["Office Cleaning"],
+    category: "cleaners",
     location: "Oakland, CA",
     availableDates: ["2024-08-16"],
   },
@@ -49,6 +51,7 @@ const allHelpers = [
     imageUrl: "https://picsum.photos/seed/3/200/200",
     imageHint: "profile portrait",
     services: ["Window Cleaning", "Carpet Cleaning"],
+    category: "cleaners",
     location: "San Francisco, CA",
     availableDates: ["2024-08-15", "2024-08-22"],
   },
@@ -64,14 +67,32 @@ const allHelpers = [
     imageUrl: "https://picsum.photos/seed/4/200/200",
     imageHint: "profile portrait",
     services: ["Move-out Cleaning", "Eco-Friendly Cleaning"],
+    category: "cleaners",
     location: "Berkeley, CA",
     availableDates: ["2024-08-25"],
+  },
+  {
+    id: "alex-chen",
+    name: "Alex Chen",
+    rating: 4.7,
+    reviews: 78,
+    price: 55,
+    unit: 'hr',
+    isVerified: true,
+    isTopPro: false,
+    imageUrl: "https://picsum.photos/seed/5/200/200",
+    imageHint: "profile portrait",
+    services: ["Residential Driving", "Airport Transfers"],
+    category: "drivers",
+    location: "San Francisco, CA",
+    availableDates: ["2024-08-18", "2024-08-21"],
   },
 ];
 
 function SearchResults() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const service = searchParams.get("service");
+  const service = searchParams.get("service") || "cleaners";
 
   const [filters, setFilters] = useState<Filters>({
     sortBy: "recommended",
@@ -85,8 +106,12 @@ function SearchResults() {
     setFilters(prev => ({...prev, ...newFilters}));
   }, []);
 
+  const handleServiceChange = (newService: string) => {
+    router.push(`/customer/search?service=${newService}`);
+  };
+
   const filteredHelpers = useMemo(() => {
-    let helpers = [...allHelpers];
+    let helpers = allHelpers.filter(h => h.category === service);
 
     // Filter by price
     helpers = helpers.filter(h => h.price >= filters.priceRange[0]);
@@ -122,9 +147,9 @@ function SearchResults() {
     }
     
     return helpers;
-  }, [filters]);
+  }, [filters, service]);
 
-  const serviceName = service ? service.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : "Services";
+  const serviceName = service.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   
   // For now, onApply is a no-op but in a real app would trigger a fetch
   const handleApply = () => { console.log("Applying filters:", filters) };
@@ -136,6 +161,8 @@ function SearchResults() {
           filters={filters} 
           onFilterChange={handleFilterChange}
           onApply={handleApply}
+          currentService={service}
+          onServiceChange={handleServiceChange}
         />
       </div>
       <div className="lg:col-span-3">

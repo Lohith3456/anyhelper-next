@@ -18,6 +18,23 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
+const serviceCategories = [
+    { value: "drivers", name: "Drivers" },
+    { value: "cleaners", name: "Cleaners" },
+    { value: "plumbers", name: "Plumbers" },
+    { value: "electricians", name: "Electricians" },
+    { value: "carpenters", name: "Carpenters" },
+    { value: "ac-appliance-repair", name: "AC/Appliance Repair" },
+    { value: "babysitters", name: "Babysitters" },
+    { value: "tutors", name: "Tutors" },
+    { value: "pet-sitters", name: "Pet Sitters" },
+    { value: "gardeners", name: "Gardeners" },
+    { value: "moving-helpers", name: "Moving Helpers" },
+    { value: "beauty-wellness", name: "Beauty & Wellness" },
+    { value: "tech-support", name: "Tech Support" },
+    { value: "handyman", name: "Handyman" },
+  ];
+
 export interface Filters {
   sortBy: string;
   priceRange: number[];
@@ -30,15 +47,36 @@ interface FilterSidebarProps {
   filters: Filters;
   onFilterChange: (filters: Partial<Filters>) => void;
   onApply: () => void;
+  currentService: string;
+  onServiceChange: (service: string) => void;
 }
 
-export function FilterSidebar({ filters, onFilterChange, onApply }: FilterSidebarProps) {
+export function FilterSidebar({ filters, onFilterChange, onApply, currentService, onServiceChange }: FilterSidebarProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Filters</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <Label htmlFor="service">Service</Label>
+          <Select 
+            value={currentService}
+            onValueChange={onServiceChange}
+          >
+            <SelectTrigger id="service">
+              <SelectValue placeholder="Select a service" />
+            </SelectTrigger>
+            <SelectContent>
+              {serviceCategories.map(category => (
+                <SelectItem key={category.value} value={category.value}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="space-y-4">
           <Label htmlFor="sort-by">Sort by</Label>
           <Select 
