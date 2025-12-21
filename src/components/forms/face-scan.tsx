@@ -85,11 +85,13 @@ export function FaceScan({ onScanComplete }: FaceScanProps) {
     return () => {
       clearTimeout(timer);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isScanning, scanStep]);
 
   useEffect(() => {
     // Cleanup camera on component unmount
     return () => stopScan();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isCompleted) {
