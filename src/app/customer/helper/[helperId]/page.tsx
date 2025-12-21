@@ -1,9 +1,23 @@
+"use client";
+
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Star, ShieldCheck, Zap, Briefcase, Calendar, MessageSquare, CheckCircle } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 // Mock data for a single helper. In a real app, you would fetch this based on params.helperId
 const helperData = {
@@ -83,7 +97,23 @@ export default function HelperProfilePage({ params }: { params: { helperId: stri
                 <span className="text-3xl font-bold">${helper.price}</span>
                 <span className="text-muted-foreground">/{helper.unit}</span>
               </p>
-              <Button size="lg" className="mt-4 w-full">Book Now</Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="lg" className="mt-4 w-full">Book Now</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      To book a helper, you need to upgrade to our Pro plan. Unlock exclusive features like instant booking, direct contact with helpers, and more.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction>Upgrade</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </CardContent>
           </Card>
         </div>
