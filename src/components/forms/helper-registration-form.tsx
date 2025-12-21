@@ -98,8 +98,9 @@ type FormSchemaType = z.infer<typeof formSchema>;
 const steps = [
   { id: 1, name: 'Personal Information', fields: ['fullName', 'email', 'phone', 'address', 'profilePhoto'] },
   { id: 2, name: 'Service Details', fields: ['serviceCategory', 'experience', 'bio'] },
-  { id: 3, name: 'Verification', fields: ['governmentId', 'proofOfAddress', 'faceScanCompleted'] },
-  { id: 4, name: 'Agreement', fields: ['terms'] },
+  { id: 3, name: 'Document Upload', fields: ['governmentId', 'proofOfAddress'] },
+  { id: 4, name: 'Facial Verification', fields: ['faceScanCompleted'] },
+  { id: 5, name: 'Agreement', fields: ['terms'] },
 ]
 
 export function HelperRegistrationForm() {
@@ -358,7 +359,7 @@ export function HelperRegistrationForm() {
                 </div>
             </div>
 
-            {/* Step 3: Verification */}
+            {/* Step 3: Document Upload */}
             <div className={cn(currentStep !== 2 && "hidden")}>
               <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -403,6 +404,11 @@ export function HelperRegistrationForm() {
                     )}
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* Step 4: Facial Verification */}
+            <div className={cn(currentStep !== 3 && "hidden")}>
                 <FormField
                   control={form.control}
                   name="faceScanCompleted"
@@ -412,7 +418,7 @@ export function HelperRegistrationForm() {
                         <CardHeader>
                           <CardTitle>Facial Verification</CardTitle>
                           <FormDescription>
-                            Complete a quick face scan to verify your identity.
+                            Complete a quick face scan to verify your identity. This helps us keep the platform safe for everyone.
                           </FormDescription>
                         </CardHeader>
                         <CardContent>
@@ -423,11 +429,10 @@ export function HelperRegistrationForm() {
                     </FormItem>
                   )}
                 />
-              </div>
             </div>
             
-            {/* Step 4: Agreement */}
-            <div className={cn(currentStep !== 3 && "hidden")}>
+            {/* Step 5: Agreement */}
+            <div className={cn(currentStep !== 4 && "hidden")}>
                 <FormField
                 control={form.control}
                 name="terms"
