@@ -52,11 +52,8 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link href="/login">
-            <Button variant="ghost">Log In</Button>
-          </Link>
           <Link href="/signup">
-            <Button style={{ backgroundColor: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}>Sign Up</Button>
+            <Button style={{ backgroundColor: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}>Get Started</Button>
           </Link>
         </div>
 
@@ -84,14 +81,9 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
-            <div className="flex flex-col gap-2 pt-2 border-t">
-              <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="ghost" className="w-full">Log In</Button>
-              </Link>
-              <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
-                <Button style={{ backgroundColor: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }} className="w-full">Sign Up</Button>
-              </Link>
-            </div>
+            <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
+              <Button className="w-full">Get Started</Button>
+            </Link>
           </nav>
         </div>
       )}
